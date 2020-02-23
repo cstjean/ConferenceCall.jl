@@ -1,7 +1,10 @@
-name = "ConferenceCalls"
+name = "ConferenceCall"
 uuid = "8b7125e8-6aee-4379-b6e3-77d6f04efc19"
 authors = ["Cedric St-Jean <cedric.stjean@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 
 [compat]
 julia = "1"
