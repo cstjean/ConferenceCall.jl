@@ -1,0 +1,13 @@
+name = "ConferenceCalls"
+uuid = "8b7125e8-6aee-4379-b6e3-77d6f04efc19"
+authors = ["Cedric St-Jean <cedric.stjean@gmail.com>"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
