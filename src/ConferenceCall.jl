@@ -2,7 +2,7 @@ module ConferenceCall
 
 using MacroTools: splitdef, combinedef, @capture
 
-export @confcalled, @confcalled_fast
+export @confcall, @confcall_fast
 
 val_value(::Type{Val{T}}) where T = T
 
@@ -24,25 +24,25 @@ call_all_methods_vector(fn, args...) =
 
 impl_name(fname::Symbol) = Symbol(fname, "_impl")
 
-""" `@confcalled_fast function foo end` """
-macro confcalled_fast(fn_def)
+""" `@confcall_fast function foo end` """
+macro confcall_fast(fn_def)
     @assert(@capture(fn_def, function fname_ end),
-            "Use `@confcalled` for function definitions")
+            "Use `@confcall` for function definitions")
     esc(:($fname(args...) =
           $ConferenceCall.call_all_methods_tuple_fast($(impl_name(fname)), args...)))
 end
 
-macro confcalled(fn_def)
+macro confcall(fn_def)
     if @capture(fn_def, function fname_ end)
         esc(:($fname(args...) =
               $ConferenceCall.call_all_methods_vector($(impl_name(fname)), args...)))
     else
         di = splitdef(fn_def)
-        esc(:($ConferenceCall.@confcalled $(hash(di[:body])) $fn_def))
+        esc(:($ConferenceCall.@confcall $(hash(di[:body])) $fn_def))
     end
 end
 
-macro confcalled(key, fn_def)
+macro confcall(key, fn_def)
     di = splitdef(fn_def)
     di2 = copy(di)
     di2[:args] = tuple(:(::Val{$key}), di[:args]...)
