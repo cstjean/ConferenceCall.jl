@@ -1,19 +1,30 @@
 # ConferenceCall
 
-ConferenceCall.jl allows one function call to call multiple methods.
+ConferenceCall.jl allows multiple methods to be defined for the same function.
+Calls to that function will call all applicable methods, and return their results in
+a `Vector`.
 
 ```julia
 @confcall function ask_for_advice end
 @confcall ask_for_advice() = "Buy!"
 @confcall ask_for_advice() = "Sell!"
+@confcall ask_for_advice(whom::String) = "I didn't say anything"
 
 julia> ask_for_advice()
 2-element Array{String,1}:
  "Sell!"
  "Buy!" 
+
+julia> ask_for_advice("Grandma")
+1-element Array{String,1}:
+ "I didn't say anything"
+
+julia> ask_for_advice(:Bob)
+0-element Array{Union{},1}
 ```
 
-All applicable methods will be called.
+The methods are called in sorted order, based on an optional key passed
+as first argument:
 
 ```julia
 @confcall function describe_object end
@@ -27,8 +38,9 @@ julia> describe_object(3.0)
  "Some number"
 ```
 
-Here I gave an (optional) `key` after `@confcall` so that the methods are called in
-a desired order. Numbers and symbols can be used (it's put in a `Val{}`). 
+Keys can be `Number`s or `Symbol`s (it's put in a `Val{}` to make each method unique). 
+
+## Performance
 
 `@confcall` is precompilation-friendly and
 [Reviseable](https://github.com/timholy/Revise.jl). However, calling these methods
