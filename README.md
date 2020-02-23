@@ -1,8 +1,9 @@
 # ConferenceCall
 
-ConferenceCall.jl allows multiple methods to be defined for the same function.
-Calls to that function will call all applicable methods, and return their results in
-a `Vector`.
+ConferenceCall.jl allows multiple methods to be defined for the same function, with
+the "same" signature (some `Val{unique_key}` is added behind the scene to make them
+different). Calls to that function will call all applicable methods, and return their
+results in a `Vector`.
 
 ```julia
 @confcall function ask_for_advice end
@@ -23,7 +24,7 @@ julia> ask_for_advice(:Bob)
 0-element Array{Union{},1}
 ```
 
-The methods are called in sorted order, based on an optional key passed
+The methods are called in sorted order, based on the optional key passed
 as first argument:
 
 ```julia
@@ -38,7 +39,7 @@ julia> describe_object(3.0)
  "Some number"
 ```
 
-Keys can be `Number`s or `Symbol`s (it's put in a `Val{}` to make each method unique). 
+Keys can be `Number`s or `Symbol`s. 
 
 ## Performance
 
