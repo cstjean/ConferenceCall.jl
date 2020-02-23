@@ -1,6 +1,6 @@
 # ConferenceCall
 
-ConferenceCall.jl allows multiple methods to be defined for the same function, with
+ConferenceCall.jl allows multiple methods to be defined with
 the "same" signature (some `Val{unique_key}` is added behind the scene to make them
 different). Calls to that function will call all applicable methods, and return their
 results in a `Vector`.
@@ -16,11 +16,11 @@ julia> ask_for_advice()
  "Sell!"
  "Buy!" 
 
-julia> ask_for_advice("Grandma")
+julia> ask_for_advice("Harry")
 1-element Array{String,1}:
  "I didn't say anything"
 
-julia> ask_for_advice(:Bob)
+julia> ask_for_advice(:BobSymbol)
 0-element Array{Union{},1}
 ```
 
@@ -41,11 +41,11 @@ julia> describe_object(3.0)
 
 Keys can be `Number`s or `Symbol`s. 
 
-## Performance
+Because it is based on plain Julia methods, `@confcall` is precompilation-friendly and
+[Reviseable](https://github.com/timholy/Revise.jl). It can be useful for macros
+that register callbacks.
 
-`@confcall` is precompilation-friendly and
-[Reviseable](https://github.com/timholy/Revise.jl). However, calling these methods
-is moderately slow, as it involves some reflection.
+Making a conference call is moderately slow, as it involves some reflection.
 
 ```julia
 julia> @btime describe_object(3.0)
