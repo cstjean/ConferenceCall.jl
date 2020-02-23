@@ -18,10 +18,9 @@ sorted_available_vals(fn) = sort(collect(available_vals(fn)), by=val_value)
     end
 end
 
-call_all_methods_tuple(fn, args...) =
-    tuple([fn(v(), args...)
-           for v in sorted_available_vals(fn)
-           if applicable(fn, v(), args...)]...)
+call_all_methods_vector(fn, args...) =
+    [fn(v(), args...) for v in sorted_available_vals(fn)
+     if applicable(fn, v(), args...)]
 
 impl_name(fname::Symbol) = Symbol(fname, "_impl")
 
@@ -36,7 +35,7 @@ end
 macro confcalled(fn_def)
     if @capture(fn_def, function fname_ end)
         esc(:($fname(args...) =
-              $ConferenceCall.call_all_methods_tuple($(impl_name(fname)), args...)))
+              $ConferenceCall.call_all_methods_vector($(impl_name(fname)), args...)))
     else
         di = splitdef(fn_def)
         esc(:($ConferenceCall.@confcalled $(hash(di[:body])) $fn_def))
