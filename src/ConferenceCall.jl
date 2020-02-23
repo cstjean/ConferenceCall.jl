@@ -2,7 +2,7 @@ module ConferenceCall
 
 using MacroTools: splitdef, combinedef, @capture
 
-export @confcalled
+export @confcalled, @confcalled_fast
 
 val_value(::Type{Val{T}}) where T = T
 
@@ -13,12 +13,15 @@ sorted_available_vals(fn) = sort(collect(available_vals(fn)), by=val_value)
 @generated function call_all_methods_tuple_fast(fn, args...)
     quote
         tuple($([:(fn($v(), args...)) 
-                 for v in sorted_available_vals(fn.instance)]...))
+                 for v in sorted_available_vals(fn.instance)
+                 if hasmethod(fn.instance, Tuple{v, args...})]...))
     end
 end
 
 call_all_methods_tuple(fn, args...) =
-    tuple([fn(v(), args...) for v in sorted_available_vals(fn)]...)
+    tuple([fn(v(), args...)
+           for v in sorted_available_vals(fn)
+           if applicable(fn, v(), args...)]...)
 
 impl_name(fname::Symbol) = Symbol(fname, "_impl")
 
