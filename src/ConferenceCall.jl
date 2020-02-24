@@ -46,7 +46,6 @@ macro confcall(fn_def)
         impl = impl_name(fname)
         esc(quote
             function $impl end
-            $impl(::Val{-999}, ::Val{-999}) = error("Dummy method") # Fix for Revise#435
             $fname(args...) = $ConferenceCall.call_all_methods_vector($impl, args...)
         end)
     else
