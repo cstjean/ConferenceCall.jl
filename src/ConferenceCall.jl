@@ -23,19 +23,29 @@ call_all_methods_vector(fn, args...) =
      if applicable(fn, v(), args...)]
 
 impl_name(fname::Symbol) = Symbol(fname, "_impl")
+function impl_name(fname::Expr)
+    @assert @capture(fname, mod_.fname2_)
+    return :($mod.$(impl_name(fname2)))
+end
 
 """ `@confcall_fast function foo end` """
 macro confcall_fast(fn_def)
     @assert(@capture(fn_def, function fname_ end),
             "Use `@confcall` for function definitions")
-    esc(:($fname(args...) =
-          $ConferenceCall.call_all_methods_tuple_fast($(impl_name(fname)), args...)))
+    impl = impl_name(fname)
+    esc(quote
+        function $impl end
+        $fname(args...) = $ConferenceCall.call_all_methods_tuple_fast($impl, args...)
+        end)
 end
 
 macro confcall(fn_def)
     if @capture(fn_def, function fname_ end)
-        esc(:($fname(args...) =
-              $ConferenceCall.call_all_methods_vector($(impl_name(fname)), args...)))
+        impl = impl_name(fname)
+        esc(quote
+            function $impl end
+            $fname(args...) = $ConferenceCall.call_all_methods_vector($impl, args...)
+        end)
     else
         di = splitdef(fn_def)
         esc(:($ConferenceCall.@confcall $(hash(di[:body])) $fn_def))
