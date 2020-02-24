@@ -4,6 +4,8 @@ using MacroTools: splitdef, combinedef, @capture
 
 export @confcall, @confcall_fast
 
+include("utils.jl")
+
 val_value(::Type{Val{T}}) where T = T
 
 available_vals(fn) = (m.sig.types[2] for m in methods(fn).ms)
