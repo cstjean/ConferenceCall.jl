@@ -51,7 +51,7 @@ macro confcall(fn_def)
         end)
     else
         di = splitdef(fn_def)
-        esc(:($ConferenceCall.@confcall $(hash(di[:body])) $fn_def))
+        esc(:($ConferenceCall.@confcall $(hash(fn_def)) $fn_def))
     end
 end
 
